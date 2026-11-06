@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "ProtoCross.Demo";
+
+// Minimal message used by the ProtoCross examples.
+// Behavior for this message lives in valueWithUncertainty.pcross.
+message value_with_uncertainty {
+  double value = 1;
+
+  //positive uncertainty only if symmetric is true
+  double positive_uncertainty = 2;
+  double negative_uncertainty = 3;
+
+  // symmetric or asymmetric uncertainty.
+  bool symmetric = 4;
+}

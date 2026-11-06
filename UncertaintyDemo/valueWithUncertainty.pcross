@@ -1,0 +1,27 @@
+import proto "valueWithUncertainty.proto";
+
+extend value_with_uncertainty {} //Leave blank for now
+
+factory value_with_uncertainty {
+    fn create_symmetric(value:double, uncertainty: double) -> value_with_uncertainty {
+        //We're ignoring negative uncertainty checks for now
+      var result: value_with_uncertainty = new value_with_uncertainty {
+        value: value,
+        positive_uncertainty: uncertainty,
+        symmetric: true,
+      };
+      
+      return result;
+    }
+    fn create_asymmetric(value:double, positive: double, negative: double) -> value_with_uncertainty {
+      //We're ignoring negative uncertainty checks for now
+      var result: value_with_uncertainty = new value_with_uncertainty {
+        value: value,
+        positive_uncertainty: positive,
+        negative_uncertainty: negative,
+        symmetric: false,
+      };
+      
+      return result;
+    }
+}

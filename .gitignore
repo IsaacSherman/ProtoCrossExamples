@@ -1,0 +1,5 @@
+/UncertaintyDemo/generated/
+/UncertaintyDemo/CPP/build/
+**/bin/
+**/obj/
+.vs/
