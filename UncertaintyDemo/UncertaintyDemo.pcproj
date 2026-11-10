@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProtoCrossProject>
+  <Sources Include="valueWithUncertainty.pcross" />
+  <Sources Include="valueWithUncertainty_tests.pcross" />
+</ProtoCrossProject>
