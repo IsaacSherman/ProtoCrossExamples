@@ -13,7 +13,7 @@ extend value_with_uncertainty {
         };
     }
 
-    var lowerUncert : double = negative_uncertainty;
+    var lowerUncert : double = negative_uncertainty;      
       //no longer symmetric, fall through to return b
       if(symmetric){
         //right is ace
@@ -21,14 +21,14 @@ extend value_with_uncertainty {
       }
       else{
         //left is ace, so lowerUncert just needs addition
-        if(right.symmetric){
+        if(right.symmetric){        
         lowerUncert += right.positive_uncertainty;
       }
       else{
         //both ace
         lowerUncert += right.negative_uncertainty;
       }
-    }
+    }  
 
     var b :value_with_uncertainty = new value_with_uncertainty{
       positive_uncertainty: upperUncert,
@@ -57,10 +57,29 @@ extend value_with_uncertainty {
       positive_uncertainty: upperUncert,
       negative_uncertainty: lowerUncert ,
       symmetric: lowerUncert == upperUncert,
-      value: value + right.value,
+      value: value - right.value,
     };
   }
+
+  fn AddDouble(right: double) -> value_with_uncertainty{
+    return Add(new value_with_uncertainty{
+      value: right,
+      symmetric: true,
+      positive_uncertainty:0
+    });
+  }
+
+    fn SubtractDouble(right: double) -> value_with_uncertainty{
+    return Subtract(new value_with_uncertainty{
+      value: right,
+      symmetric: true,
+      positive_uncertainty:0
+    });
+  }
 }
+
+
+
 
 factory value_with_uncertainty {
     fn create_symmetric(value:double, uncertainty: double) -> value_with_uncertainty {
