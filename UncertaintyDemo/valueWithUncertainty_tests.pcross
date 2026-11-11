@@ -1,0 +1,43 @@
+import proto "valueWithUncertainty.proto";
+
+test value_with_uncertainty.Add "adds symmetric bounds and ignores stored lower bounds" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 99,
+        symmetric: true,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 98,
+        symmetric: true,
+    };
+    expect return new value_with_uncertainty {
+        value: 30,
+        positive_uncertainty: 7,
+        symmetric: true,
+    };
+}
+
+test value_with_uncertainty.Subtract "subtracts the nominal value and adds symmetric bounds" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 99,
+        symmetric: true,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 98,
+        symmetric: true,
+    };
+    expect return new value_with_uncertainty {
+        value: -10,
+        positive_uncertainty: 7,
+        symmetric: true,
+    };
+}

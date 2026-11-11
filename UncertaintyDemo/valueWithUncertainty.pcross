@@ -1,6 +1,66 @@
 import proto "valueWithUncertainty.proto";
 
-extend value_with_uncertainty {} //Leave blank for now
+extend value_with_uncertainty {
+  fn Add(right:value_with_uncertainty) -> value_with_uncertainty{
+    var newValue : double = value + right.value;
+    var upperUncert : double = positive_uncertainty + right.positive_uncertainty; //always the case
+    if(right.symmetric && symmetric){
+        return new value_with_uncertainty{
+          positive_uncertainty: upperUncert,
+          negative_uncertainty:0, //ignored
+          symmetric: true,
+          value: newValue
+        };
+    }
+
+    var lowerUncert : double = negative_uncertainty;
+      //no longer symmetric, fall through to return b
+      if(symmetric){
+        //right is ace
+        lowerUncert = right.negative_uncertainty + positive_uncertainty;
+      }
+      else{
+        //left is ace, so lowerUncert just needs addition
+        if(right.symmetric){
+        lowerUncert += right.positive_uncertainty;
+      }
+      else{
+        //both ace
+        lowerUncert += right.negative_uncertainty;
+      }
+    }
+
+    var b :value_with_uncertainty = new value_with_uncertainty{
+      positive_uncertainty: upperUncert,
+      negative_uncertainty: lowerUncert,
+      symmetric: lowerUncert == upperUncert,
+      value: newValue
+    };
+    return b;
+  }
+
+  fn Subtract(right:value_with_uncertainty)-> value_with_uncertainty{
+      var leftUpper = positive_uncertainty;
+      var leftLower = positive_uncertainty;
+      if(!symmetric){
+        leftLower = negative_uncertainty;
+      }
+      var rightUpper = right.positive_uncertainty;
+      var rightLower = right.positive_uncertainty;
+      if(!right.symmetric){
+        rightLower = right.negative_uncertainty;
+      }
+      var upperUncert = leftUpper + rightLower;
+      var lowerUncert = leftLower + rightUpper;
+
+      return new value_with_uncertainty{
+      positive_uncertainty: upperUncert,
+      negative_uncertainty: lowerUncert ,
+      symmetric: lowerUncert == upperUncert,
+      value: value + right.value,
+    };
+  }
+}
 
 factory value_with_uncertainty {
     fn create_symmetric(value:double, uncertainty: double) -> value_with_uncertainty {
