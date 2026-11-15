@@ -1,0 +1,299 @@
+import proto "valueWithUncertainty.proto";
+
+test value_with_uncertainty.Add "adds symmetric bounds and ignores stored lower bounds" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 99,
+        symmetric: true,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 98,
+        symmetric: true,
+    };
+    expect return new value_with_uncertainty {
+        value: 30,
+        positive_uncertainty: 7,
+        symmetric: true,
+    };
+}
+
+test value_with_uncertainty.Add "adds a symmetric left operand to an asymmetric right operand" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 99,
+        symmetric: true,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 1,
+        symmetric: false,
+    };
+    expect return new value_with_uncertainty {
+        value: 30,
+        positive_uncertainty: 7,
+        negative_uncertainty: 4,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.Add "adds an asymmetric left operand to a symmetric right operand" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 98,
+        symmetric: true,
+    };
+    expect return new value_with_uncertainty {
+        value: 30,
+        positive_uncertainty: 7,
+        negative_uncertainty: 6,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.Add "adds corresponding bounds from asymmetric operands" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 1,
+        symmetric: false,
+    };
+    expect return new value_with_uncertainty {
+        value: 30,
+        positive_uncertainty: 7,
+        negative_uncertainty: 3,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.Add "marks equal resulting bounds as symmetric" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 1,
+        negative_uncertainty: 2,
+        symmetric: false,
+    };
+    expect return new value_with_uncertainty {
+        value: 30,
+        positive_uncertainty: 4,
+        symmetric: true,
+    };
+}
+
+test value_with_uncertainty.Subtract "subtracts the nominal value and adds symmetric bounds" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 99,
+        symmetric: true,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 98,
+        symmetric: true,
+    };
+    expect return new value_with_uncertainty {
+        value: -10,
+        positive_uncertainty: 7,
+        symmetric: true,
+    };
+}
+
+test value_with_uncertainty.Subtract "subtracts an asymmetric right operand from a symmetric left operand" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 99,
+        symmetric: true,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 1,
+        symmetric: false,
+    };
+    expect return new value_with_uncertainty {
+        value: -10,
+        positive_uncertainty: 4,
+        negative_uncertainty: 7,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.Subtract "subtracts a symmetric right operand from an asymmetric left operand" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 98,
+        symmetric: true,
+    };
+    expect return new value_with_uncertainty {
+        value: -10,
+        positive_uncertainty: 7,
+        negative_uncertainty: 6,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.Subtract "crosses the right operand's asymmetric bounds" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 1,
+        symmetric: false,
+    };
+    expect return new value_with_uncertainty {
+        value: -10,
+        positive_uncertainty: 4,
+        negative_uncertainty: 6,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.Subtract "subtracts a negative exact value" {
+    receiver {
+        value: 10,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: -20,
+    };
+    expect return new value_with_uncertainty {
+        value: 30,
+        positive_uncertainty: 0,
+        symmetric: true,
+    };
+}
+
+test value_with_uncertainty.AddDouble "adds a negative scalar and preserves symmetric bounds" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 99,
+        symmetric: true,
+    }
+
+    arg right = -2.5;
+    expect return new value_with_uncertainty {
+        value: 7.5,
+        positive_uncertainty: 3,
+        symmetric: true,
+    };
+}
+
+test value_with_uncertainty.AddDouble "adds a scalar and preserves asymmetric bounds" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    }
+
+    arg right = 2.5;
+    expect return new value_with_uncertainty {
+        value: 12.5,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.SubtractDouble "subtracts a negative scalar and preserves symmetric bounds" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 99,
+        symmetric: true,
+    }
+
+    arg right = -2.5;
+    expect return new value_with_uncertainty {
+        value: 12.5,
+        positive_uncertainty: 3,
+        symmetric: true,
+    };
+}
+
+test value_with_uncertainty.SubtractDouble "subtracts a scalar and preserves asymmetric bounds" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    }
+
+    arg right = 2.5;
+    expect return new value_with_uncertainty {
+        value: 7.5,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.factory.create_symmetric "stores one shared uncertainty" {
+    arg value = 10;
+    arg uncertainty = 0.5;
+    expect return new value_with_uncertainty {
+        value: 10,
+        positive_uncertainty: 0.5,
+        symmetric: true,
+    };
+}
+
+test value_with_uncertainty.factory.create_asymmetric "stores upper and lower uncertainties separately" {
+    arg value = 10;
+    arg positive = 0.75;
+    arg negative = 0.25;
+    expect return new value_with_uncertainty {
+        value: 10,
+        positive_uncertainty: 0.75,
+        negative_uncertainty: 0.25,
+        symmetric: false,
+    };
+}
