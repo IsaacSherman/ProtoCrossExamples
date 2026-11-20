@@ -38,7 +38,6 @@ extend value_with_uncertainty {
     };
     return b;
   }
-
   fn Subtract(right:value_with_uncertainty)-> value_with_uncertainty{
       var leftUpper = positive_uncertainty;
       var leftLower = positive_uncertainty;
@@ -76,6 +75,37 @@ extend value_with_uncertainty {
       positive_uncertainty:0
     });
   }
+
+    fn Multiply(right: value_with_uncertainty) -> value_with_uncertainty{
+      var newValue = value * right.value;
+      var lowerUncert = negative_uncertainty;
+      var rightLower = right.negative_uncertainty;
+      if(symmetric){
+          lowerUncert  = positive_uncertainty;
+        }
+      if(right.symmetric){
+        rightLower = right.positive_uncertainty;
+      }
+
+      var upperA = value + positive_uncertainty;
+      var upperB =  right.value + right.positive_uncertainty;
+      var lowerA = value - lowerUncert;
+      var lowerB = right.value - rightLower;
+      var aLbL = lowerA*lowerB;
+      var aUbL = upperA*lowerB;
+      var aLbU = lowerA*upperB;
+      var aUbU = upperA*upperB;
+      var products = new DoubleList {
+        values: [aLbL, aUbL, aLbU, aUbU]
+      };
+      
+      return new value_with_uncertainty{
+        value: value * right.value,
+        positive_uncertainty: products.max(),
+        negative_uncertainty: products.min(),
+        symmetric: false
+      };
+    }
 }
 
 

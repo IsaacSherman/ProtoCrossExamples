@@ -1,0 +1,40 @@
+import proto "valueWithUncertainty.proto";
+
+extend DoubleList {
+
+  fn Count() -> int64 {
+  var count = 0;
+      for v in values {
+        count = count + 1;
+      }    
+    return count;
+  }
+
+  fn min() -> double {
+    if(Count() == 0){
+      return __NAN;
+    }
+
+    var minValue:double = __INF;
+    for v in values {
+      if (v < minValue) {
+        minValue = v;
+      }
+    }
+    return minValue;
+  }
+
+  fn max() -> double {
+    if(Count() == 0){
+      return __NAN;
+    }
+
+    var maxValue:double = -__INF;
+    for v in values {
+      if (v > maxValue) {
+        maxValue = v;
+      }
+    }
+    return maxValue;
+  }
+}

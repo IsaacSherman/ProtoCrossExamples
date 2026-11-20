@@ -15,3 +15,7 @@ message value_with_uncertainty {
   // symmetric or asymmetric uncertainty.
   bool symmetric = 4;
 }
+
+message DoubleList {
+  repeated double values = 1;
+}
