@@ -99,11 +99,14 @@ extend value_with_uncertainty {
         values: [aLbL, aUbL, aLbU, aUbU]
       };
       
+      var positiveUncertainty = products.max() - newValue;
+      var negativeUncertainty = newValue - products.min();
+
       return new value_with_uncertainty{
-        value: value * right.value,
-        positive_uncertainty: products.max(),
-        negative_uncertainty: products.min(),
-        symmetric: false
+        value: newValue,
+        positive_uncertainty: positiveUncertainty,
+        negative_uncertainty: negativeUncertainty,
+        symmetric: positiveUncertainty == negativeUncertainty
       };
     }
 }

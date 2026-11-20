@@ -297,3 +297,91 @@ test value_with_uncertainty.factory.create_asymmetric "stores upper and lower un
         symmetric: false,
     };
 }
+
+test value_with_uncertainty.Multiply "symmetric inputs can produce asymmetric product bounds" {
+    receiver {
+        value: 2,
+        positive_uncertainty: 1,
+        negative_uncertainty: 99,
+        symmetric: true,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 3,
+        positive_uncertainty: 1,
+        negative_uncertainty: 98,
+        symmetric: true,
+    };
+    expect return new value_with_uncertainty {
+        value: 6,
+        positive_uncertainty: 6,
+        negative_uncertainty: 4,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.Multiply "a negative exact factor reverses asymmetric uncertainties" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: -2,
+        positive_uncertainty: 0,
+        negative_uncertainty: 99,
+        symmetric: true,
+    };
+    expect return new value_with_uncertainty {
+        value: -20,
+        positive_uncertainty: 4,
+        negative_uncertainty: 6,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.Multiply "both input ranges can cross zero" {
+    receiver {
+        value: 1,
+        positive_uncertainty: 2,
+        negative_uncertainty: 99,
+        symmetric: true,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: -1,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    };
+    expect return new value_with_uncertainty {
+        value: -1,
+        positive_uncertainty: 7,
+        negative_uncertainty: 8,
+        symmetric: false,
+    };
+}
+
+test value_with_uncertainty.Multiply "an exact zero factor produces an exact symmetric zero" {
+    receiver {
+        value: 10,
+        positive_uncertainty: 3,
+        negative_uncertainty: 2,
+        symmetric: false,
+    }
+
+    arg right = new value_with_uncertainty {
+        value: 0,
+        positive_uncertainty: 0,
+        negative_uncertainty: 99,
+        symmetric: true,
+    };
+    expect return new value_with_uncertainty {
+        value: 0,
+        positive_uncertainty: 0,
+        negative_uncertainty: 0,
+        symmetric: true,
+    };
+}
